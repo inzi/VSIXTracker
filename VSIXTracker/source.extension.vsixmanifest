@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="VSIXTracker.122a5183-6f56-4e9f-b686-24bb391487c9" Version="1.0" Language="en-US" Publisher="Chris Norman" />
+        <Identity Id="VSIXTracker.122a5183-6f56-4e9f-b686-24bb391487c9" Version="1.1" Language="en-US" Publisher="Chris Norman" />
         <DisplayName>Toggle Tracking</DisplayName>
         <Description xml:space="preserve">This extension adds a button in solution explorer to toggle Track Active Item in Solution Explorer</Description>
         <Icon>Resources\ToggleTrackActiveItemCommandEna.png</Icon>

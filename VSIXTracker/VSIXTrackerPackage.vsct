@@ -60,7 +60,7 @@
 				<CommandFlag>DynamicVisibility</CommandFlag>
 				<Icon guid="guidImages" id="bmpPic1" />
 				<Strings>
-					<ButtonText>Invoke ToggleTracking</ButtonText>
+					<ButtonText>Tracking On</ButtonText>
 				</Strings>
 			</Button>
 			<Button guid="guidVSIXTrackerPackageCmdSet" id="ToggleTrackingId2" priority="0x0101" type="Button">
@@ -69,7 +69,7 @@
 				<CommandFlag>DynamicVisibility</CommandFlag>				
 				<Icon guid="guidImages" id="bmpPic2" />
 				<Strings>
-					<ButtonText>Invoke ToggleTracking</ButtonText>
+					<ButtonText>Tracking Off</ButtonText>
 				</Strings>
 			</Button>
 		</Buttons>
