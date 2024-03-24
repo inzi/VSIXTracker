@@ -77,7 +77,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ToggleTrackActiveItemCommandDis.png" />
-    <Content Include="Resources\ToggleTrackActiveItemCommandEna.png" />
+    <Content Include="Resources\ToggleTrackActiveItemCommandEna.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\ToggleTrackActiveItemCommandImg.png" />
     <Content Include="Resources\ToggleTracking.png" />
   </ItemGroup>

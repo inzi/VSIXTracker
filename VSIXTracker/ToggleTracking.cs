@@ -4,8 +4,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms.Design;
 using Task = System.Threading.Tasks.Task;
 
 namespace VSIXTracker
@@ -19,6 +21,11 @@ namespace VSIXTracker
         /// Command ID.
         /// </summary>
         public const int CommandId = 0x0100;
+        public const int CommandId2 = 0x0101;
+
+        private OleMenuCommand menuItem;
+        private OleMenuCommand menuItem2;
+
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -42,8 +49,15 @@ namespace VSIXTracker
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            menuItem = new OleMenuCommand(this.Execute, menuCommandID);
+            menuItem.BeforeQueryStatus += MenuCommand_BeforeQueryStatus;
             commandService.AddCommand(menuItem);
+
+            var menuCommandID2 = new CommandID(CommandSet, CommandId2);
+            menuItem2 = new OleMenuCommand(this.Execute, menuCommandID2);
+            menuItem2.BeforeQueryStatus += MenuCommand_BeforeQueryStatus;
+            commandService.AddCommand(menuItem2);
+
         }
 
         /// <summary>
@@ -80,6 +94,34 @@ namespace VSIXTracker
             Instance = new ToggleTracking(package, commandService);
         }
 
+
+        private bool IsTrackingActive()
+        {
+            var dte = (DTE)Package.GetGlobalService(typeof(SDTE));
+
+            // Get the Properties collection of the DTE object.
+            Properties properties = dte.Properties["Environment", "ProjectsAndSolution"];
+
+            // Find the "Track Active Item in Solution Explorer" property.
+            Property trackActiveItemPropertyOption = properties.Item("TrackFileSelectionInExplorer");
+
+            if (trackActiveItemPropertyOption != null)
+            {
+                return (bool)trackActiveItemPropertyOption.Value;
+            }
+            return false;
+        }
+        private void ToggleTrackingActive()
+        {
+            var dte = (DTE)Package.GetGlobalService(typeof(SDTE));
+            Properties properties = dte.Properties["Environment", "ProjectsAndSolution"];
+            Property trackActiveItemPropertyOption = properties.Item("TrackFileSelectionInExplorer");
+            if (trackActiveItemPropertyOption != null)
+            {
+                trackActiveItemPropertyOption.Value = !(bool)trackActiveItemPropertyOption.Value;
+            }
+        }
+
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
         /// See the constructor to see how the menu item is associated with this function using
@@ -92,44 +134,30 @@ namespace VSIXTracker
 
             var dte = (DTE)Package.GetGlobalService(typeof(SDTE));
 
-            //var myCommand = sender as OleMenuCommand;
-            //if (myCommand == null)
-            //{
-            //    return;
-            //}
-
-            // Get the Properties collection of the DTE object.
-            Properties properties = dte.Properties["Environment", "ProjectsAndSolution"];
-
-            // Iterate over each property in the collection.
-            foreach (Property property in properties)
+            var myCommand = sender as OleMenuCommand;
+            if (myCommand == null)
             {
-                // Print the property name and value to the debug window.
-                System.Diagnostics.Debug.WriteLine($"Name: {property.Name}, Value: {property.Value}");
+                return;
             }
 
-            // Find the "Track Active Item in Solution Explorer" property.
-            Property trackActiveItemPropertyOption = properties.Item("TrackFileSelectionInExplorer");
+            ToggleTrackingActive();
+           
+        }
 
-            if (trackActiveItemPropertyOption != null)
+        private void MenuCommand_BeforeQueryStatus(object sender, EventArgs e)
+        {
+            var command = sender as OleMenuCommand;
+            if (command.CommandID.ID == CommandId)
             {
-                bool currentValue = (bool)trackActiveItemPropertyOption.Value;
-                trackActiveItemPropertyOption.Value = !currentValue;
-
+                command.Visible = !IsTrackingActive();
 
             }
-            //ThreadHelper.ThrowIfNotOnUIThread();
-            //string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
-            //string title = "ToggleTracking";
+            else if (command.CommandID.ID == CommandId2)
+            {
+                command.Visible = IsTrackingActive();
 
-            //// Show a message box to prove we were here
-            //VsShellUtilities.ShowMessageBox(
-            //    this.package,
-            //    message,
-            //    title,
-            //    OLEMSGICON.OLEMSGICON_INFO,
-            //    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-            //    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+          
         }
     }
 }

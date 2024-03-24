@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -26,7 +27,7 @@ namespace VSIXTracker
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [Guid(VSIXTrackerPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-
+    [ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class VSIXTrackerPackage : AsyncPackage
     {
         /// <summary>
